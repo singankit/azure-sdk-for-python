@@ -20,7 +20,7 @@ from azure.ai.ml.constants._registry import StorageAccountType
 
 # This exists despite not being used by the schema validator because this entire
 # class is an output only value from the API.
-@experimental
+# @experimental
 class SystemCreatedAcrAccount:
     def __init__(
         self,
@@ -85,7 +85,7 @@ class SystemCreatedAcrAccount:
             return None  # TODO should this throw an error instead?
 
 
-@experimental
+# @experimental
 class SystemCreatedStorageAccount:
     def __init__(
         self,

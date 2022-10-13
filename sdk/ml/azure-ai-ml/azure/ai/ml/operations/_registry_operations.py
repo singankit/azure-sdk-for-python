@@ -24,7 +24,7 @@ from ..constants._common import LROConfigurations
 ops_logger = OpsLogger(__name__)
 module_logger = ops_logger.module_logger
 
-@experimental
+# @experimental
 class RegistryOperations:
     """RegistryOperations.
 
