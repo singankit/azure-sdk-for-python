@@ -19,85 +19,6 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class InputData(_model_base.Model):
-    """Abstract data class.
-
-    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    AppInsightsConfiguration, Dataset
-
-
-    :ivar type: Discriminator property for InputData. Required. Default value is None.
-    :vartype type: str
-    :ivar id: Evaluation input data. Required.
-    :vartype id: str
-    """
-
-    __mapping__: Dict[str, _model_base.Model] = {}
-    type: str = rest_discriminator(name="type")
-    """Discriminator property for InputData. Required. Default value is None."""
-    id: str = rest_field()
-    """Evaluation input data. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        type: str,
-        id: str,  # pylint: disable=redefined-builtin
-    ): ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, **kwargs)
-
-
-class AppInsightsConfiguration(InputData, discriminator="app_insights"):
-    """Data Source for Application Insight.
-
-
-    :ivar id: Evaluation input data. Required.
-    :vartype id: str
-    :ivar type: Required. Default value is "app_insights".
-    :vartype type: str
-    :ivar connection_string: Application Insight connection string. Required.
-    :vartype connection_string: str
-    :ivar query: Query to fetch data. Required.
-    :vartype query: str
-    """
-
-    type: Literal["app_insights"] = rest_discriminator(name="type")  # type: ignore
-    """Required. Default value is \"app_insights\"."""
-    connection_string: str = rest_field(name="connectionString")
-    """Application Insight connection string. Required."""
-    query: str = rest_field()
-    """Query to fetch data. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        id: str,  # pylint: disable=redefined-builtin
-        connection_string: str,
-        query: str,
-    ): ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, type="app_insights", **kwargs)
-
-
 class ConnectionProperties(_model_base.Model):
     """to do.
 
@@ -246,24 +167,22 @@ class CredentialsSASAuth(_model_base.Model):
     """to do. Required."""
 
 
-class Dataset(InputData, discriminator="dataset"):
+class Dataset(_model_base.Model):
     """Dataset as source for evaluation.
 
 
-    :ivar id: Evaluation input data. Required.
-    :vartype id: str
-    :ivar type: Required. Default value is "dataset".
-    :vartype type: str
+    :ivar uri: Required.
+    :vartype uri: str
     """
 
-    type: Literal["dataset"] = rest_discriminator(name="type")  # type: ignore
-    """Required. Default value is \"dataset\"."""
+    uri: str = rest_field()
+    """Required."""
 
     @overload
     def __init__(
         self,
         *,
-        id: str,  # pylint: disable=redefined-builtin
+        uri: str,
     ): ...
 
     @overload
@@ -274,7 +193,7 @@ class Dataset(InputData, discriminator="dataset"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:  # pylint: disable=useless-super-delegation
-        super().__init__(*args, type="dataset", **kwargs)
+        super().__init__(*args, **kwargs)
 
 
 class Evaluation(_model_base.Model):
@@ -286,7 +205,7 @@ class Evaluation(_model_base.Model):
     :ivar id: Identifier of the evaluation.
     :vartype id: str
     :ivar data: Data for evaluation. Required.
-    :vartype data: ~azure.ai.client.models.InputData
+    :vartype data: ~azure.ai.client.models.Dataset
     :ivar display_name: Update stage to 'Archive' to archive the asset. Default is Development,
      which means the asset is under development.
     :vartype display_name: str
@@ -308,7 +227,7 @@ class Evaluation(_model_base.Model):
 
     id: Optional[str] = rest_field()
     """Identifier of the evaluation."""
-    data: "_models.InputData" = rest_field()
+    data: "_models.Dataset" = rest_field()
     """Data for evaluation. Required."""
     display_name: Optional[str] = rest_field(name="displayName")
     """Update stage to 'Archive' to archive the asset. Default is Development, which means the asset
@@ -332,7 +251,7 @@ class Evaluation(_model_base.Model):
     def __init__(
         self,
         *,
-        data: "_models.InputData",
+        data: "_models.Dataset",
         evaluators: Dict[str, "_models.EvaluatorConfiguration"],
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         display_name: Optional[str] = None,

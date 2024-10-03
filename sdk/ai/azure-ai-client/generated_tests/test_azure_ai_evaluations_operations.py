@@ -21,7 +21,7 @@ class TestAzureAIEvaluationsOperations(AzureAIClientTestBase):
             resource_group_name="str",
             workspace_name="str",
             evaluation={
-                "data": "input_data",
+                "data": {"uri": "str"},
                 "evaluators": {"str": {"id": "str", "dataMapping": {"str": "str"}, "initParams": {"str": {}}}},
                 "description": "str",
                 "displayName": "str",
